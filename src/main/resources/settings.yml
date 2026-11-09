@@ -37,6 +37,8 @@ members-gui:
   displayname: "<white><player> <gray>(<rank>)"
   glowing: false
   lore:
+    - "<gray>Status: <yellow><status>"
+    - "<gray>Last seen: <white><last_seen>"
     - "<gray>Left click: promote"
     - "<gray>Right click: demote"
 

@@ -17,7 +17,17 @@ class Messages(private val plugin: DaClans) {
         sender.sendMessage(mm.deserialize(raw, *resolvers.toTypedArray()))
     }
 
+    fun sendParsed(sender: CommandSender, key: String, vararg values: Pair<String, String>) {
+        val raw = plugin.config.getString("messages.$key") ?: return
+        val resolvers = values.map { Placeholder.parsed(it.first, it.second) }
+        sender.sendMessage(mm.deserialize(raw, *resolvers.toTypedArray()))
+    }
+
     fun clan(clan: Clan, key: String, vararg values: Pair<String, String>) {
         clan.members.keys.forEach { id -> Bukkit.getPlayer(id)?.let { send(it, key, *values) } }
+    }
+
+    fun clanParsed(clan: Clan, key: String, vararg values: Pair<String, String>) {
+        clan.members.keys.forEach { id -> Bukkit.getPlayer(id)?.let { sendParsed(it, key, *values) } }
     }
 }

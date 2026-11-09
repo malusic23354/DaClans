@@ -7,15 +7,18 @@ class Clan(
     var name: String,
     var leader: UUID,
     val createdAt: Long,
-    var bank: Double = 0.0,
+    var bankCents: Long = 0L,
     var open: Boolean = false,
     var inviteLeaderOnly: Boolean = true,
     var maxMembers: Int = 10,
     val members: MutableMap<UUID, String> = mutableMapOf(),
+    val lastSeen: MutableMap<UUID, Long> = mutableMapOf(),
     val allies: MutableSet<UUID> = mutableSetOf(),
     val enemies: MutableSet<UUID> = mutableSetOf(),
     val perms: MutableMap<String, String> = mutableMapOf(),
-    var color: String = ""
+    var color: String = "",
+    var description: String = "",
+    val logs: MutableList<BankLog> = mutableListOf()
 ) {
     fun coloredName(): String {
         if (color.isBlank()) return name

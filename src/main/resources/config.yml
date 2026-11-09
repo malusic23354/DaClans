@@ -14,12 +14,35 @@ hooks:
   nexo: true
   bountylite: true
   vault: true
+  carbonchat: true
 
 clan:
   name-regex: "[A-Za-z0-9_]{3,16}"
   max-members: 10
   invite-expiry-seconds: 60
   ally-request-expiry-seconds: 120
+  cleanup-seconds: 60
+  list-page-size: 10
+  description-max-length: 120
+  bank-logs:
+    max: 20
+    retention-days: 30
+  last-seen:
+    enabled: true
+    online-text: "Online"
+    offline-text: "Offline"
+  inactivity:
+    enabled: false
+    days: 30
+    check-minutes: 30
+    action: transfer
+
+chat:
+  enabled: true
+  clan-format: "<gray>[Clan] <white><player>: <message>"
+  ally-format: "<gray>[Ally] <white><player>: <message>"
+  carbon:
+    enabled: true
 
 ranks:
   member:
@@ -57,6 +80,7 @@ default-permissions:
   rename: leader
   settings: coleader
   warn: officer
+  description: leader
 
 damage-reduction:
   clan: 0
@@ -66,6 +90,7 @@ anti-teaming:
   enabled: true
   threshold: 2
   window-seconds: 15
+  per-clan-cooldown-seconds: 60
 
 leaderboard:
   enabled: true
@@ -132,7 +157,7 @@ messages:
   deposited: "<green>Deposited <amount> into the clan bank."
   withdrawn: "<green>Withdrew <amount> from the clan bank."
   leaderboard-disabled: "<red>The leaderboard is disabled."
-  top-header: "<gold>Top clans (<page>/<pages>)"
+  top-header: "<gold>Top clans by <type> (<page>/<pages>)"
   top-line: "<gray><rank>. <white><name> <yellow><value>"
   upgrade-max: "<red>The clan is already at the maximum size."
   upgrade-no-funds: "<red>The clan bank needs <cost>."
@@ -142,3 +167,32 @@ messages:
   bounty-blocked: "<red>You cannot place bounties on your teammates."
   reload-success: "<green>Configuration reloaded."
   reload-failed: "<red>Reload failed. Check the console for details."
+  invalid-amount: "<red>Enter a valid amount."
+  invalid-type: "<red>Unknown leaderboard type <type>."
+  description-empty: "<gray>This clan has no description."
+  description-set: "<green>Clan description updated."
+  description-too-long: "<red>Descriptions cannot be longer than <max> characters."
+  info-header: "<gold><name>"
+  info-leader: "<gray>Leader: <white><player>"
+  info-description: "<gray>Description: <white><description>"
+  info-members: "<gray>Members: <white><members>/<max>"
+  info-bank: "<gray>Bank: <yellow><amount>"
+  info-allies: "<gray>Allies: <white><count>"
+  info-enemies: "<gray>Enemies: <white><count>"
+  info-created: "<gray>Created: <white><date>"
+  list-header: "<gold>Clans (<page>/<pages>) <gray>- <white><total> total"
+  list-line: "<gray>- <white><name> <dark_gray>(<members>/<max>) <yellow><bank>"
+  members-header: "<gold><name> members <gray>(<count>)"
+  members-line: "<gray>- <white><player> <dark_gray>(<rank>) <gray><last_seen>"
+  members-line-no-seen: "<gray>- <white><player> <dark_gray>(<rank>)"
+  banklog-header: "<gold><name> bank logs"
+  banklog-empty: "<gray>No bank logs yet."
+  banklog-line: "<dark_gray><date> <white><player> <yellow><type> <green><amount> <gray>Balance: <white><balance>"
+  chat-disabled: "<red>Clan chat is disabled."
+  chat-no-recipients: "<red>No clan members are online."
+  leader-inactivity-transferred: "<yellow><player> is now the clan leader because the previous leader was inactive."
+  inactive-clan-disbanded: "<yellow>The inactive clan <name> was disbanded."
+  version-plugin: "<gray>DaClans version: <white><version>"
+  version-server: "<gray>Server: <white><version>"
+  version-api: "<gray>API: <white><version>"
+  version-author: "<gray>Author: <white><author>"

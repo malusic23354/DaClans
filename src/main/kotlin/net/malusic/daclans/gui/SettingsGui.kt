@@ -3,6 +3,7 @@ package net.malusic.daclans
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.malusic.daclans.util.ItemFactory
+import net.malusic.daclans.util.TimeFormat
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
@@ -14,6 +15,8 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.meta.SkullMeta
 import java.io.File
+import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 import java.util.UUID
 
 class SettingsGui(private val plugin: DaClans) : Listener {
@@ -38,7 +41,26 @@ class SettingsGui(private val plugin: DaClans) : Listener {
 
     fun reload() {
         if (!file.exists()) plugin.saveResource("settings.yml", false)
+        val defaults = YamlConfiguration.loadConfiguration(
+            InputStreamReader(plugin.getResource("settings.yml") ?: return, StandardCharsets.UTF_8)
+        )
         cfg = YamlConfiguration.loadConfiguration(file)
+        val existing = cfg.getKeys(true)
+        var changed = false
+        for (path in defaults.getKeys(true)) {
+            if (defaults.isConfigurationSection(path)) continue
+            if (path !in existing) {
+                cfg.set(path, defaults.get(path))
+                changed = true
+            }
+        }
+        if (changed) {
+            try {
+                cfg.save(file)
+            } catch (e: Exception) {
+                plugin.logger.warning("Could not update settings.yml: ${e.message}")
+            }
+        }
         size = (cfg.getInt("size", 45).coerceIn(27, 54) / 9) * 9
     }
 
@@ -78,12 +100,13 @@ class SettingsGui(private val plugin: DaClans) : Listener {
 
     private fun main(h: Holder, clan: Clan) {
         val upgrade = cfg.getConfigurationSection("items.upgrade")
+        val costCents = Math.round((upgrade?.getDouble("cost", 0.0) ?: 0.0) * 100.0)
         val base = listOf(
             "clan" to clan.name,
             "members" to clan.members.size.toString(),
             "max" to clan.maxMembers.toString(),
             "amount" to (upgrade?.getInt("amount", 5) ?: 5).toString(),
-            "cost" to ClanManager.money(upgrade?.getDouble("cost", 0.0) ?: 0.0)
+            "cost" to ClanManager.money(costCents)
         )
         for (key in listOf("upgrade", "ranks", "members", "open", "invite")) {
             val sec = cfg.getConfigurationSection("items.$key") ?: continue
@@ -115,11 +138,28 @@ class SettingsGui(private val plugin: DaClans) : Listener {
 
     private fun members(h: Holder, clan: Clan) {
         val sec = cfg.getConfigurationSection("members-gui")
+        val showSeen = plugin.config.getBoolean("clan.last-seen.enabled", true)
         val sorted = clan.members.entries.sortedByDescending { plugin.ranks.level(it.value) }
         interior().zip(sorted).forEach { (slot, entry) ->
             val off = Bukkit.getOfflinePlayer(entry.key)
-            val name = sec?.getString("name")?.replace("<rank>", plugin.ranks.display(entry.value))
-            val item = ItemFactory.build(plugin, sec, listOf("player" to (off.name ?: "?")), name)
+            val rank = plugin.ranks.display(entry.value)
+            val seen = if (showSeen) TimeFormat.ago(clan.lastSeen[entry.key] ?: 0L) else ""
+            val name = sec?.getString("displayname")?.replace("<rank>", rank)
+            val item = ItemFactory.build(
+                plugin,
+                sec,
+                listOf(
+                    "player" to (off.name ?: "?"),
+                    "rank" to rank,
+                    "last_seen" to seen,
+                    "status" to if (Bukkit.getPlayer(entry.key) != null) {
+                        plugin.config.getString("clan.last-seen.online-text", "Online")!!
+                    } else {
+                        plugin.config.getString("clan.last-seen.offline-text", "Offline")!!
+                    }
+                ),
+                name
+            )
             (item.itemMeta as? SkullMeta)?.let {
                 it.owningPlayer = off
                 item.itemMeta = it
@@ -190,12 +230,15 @@ class SettingsGui(private val plugin: DaClans) : Listener {
         val sec = cfg.getConfigurationSection("items.upgrade") ?: return
         val amount = sec.getInt("amount", 5)
         val max = sec.getInt("max", 50)
-        val cost = sec.getDouble("cost", 0.0)
+        val costCents = Math.round(sec.getDouble("cost", 0.0) * 100.0)
         when {
             clan.maxMembers >= max -> plugin.messages.send(player, "upgrade-max")
-            cost > 0 && clan.bank < cost -> plugin.messages.send(player, "upgrade-no-funds", "cost" to ClanManager.money(cost))
+            costCents > 0 && clan.bankCents < costCents -> plugin.messages.send(player, "upgrade-no-funds", "cost" to ClanManager.money(costCents))
             else -> {
-                clan.bank -= cost
+                if (costCents > 0) {
+                    clan.bankCents -= costCents
+                    plugin.clans.addBankLog(clan, player.uniqueId, BankLog.Type.UPGRADE, costCents, clan.bankCents)
+                }
                 clan.maxMembers = minOf(max, clan.maxMembers + amount)
                 plugin.clans.save(clan)
                 plugin.messages.send(player, "upgraded", "max" to clan.maxMembers.toString())

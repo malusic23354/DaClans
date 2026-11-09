@@ -1,5 +1,5 @@
 name: DaClans
-version: "0.1.2"
+version: "0.1.3"
 main: net.malusic.daclans.DaClans
 loader: net.malusic.daclans.DaClansLoader
 api-version: "1.21.11"
@@ -40,6 +40,24 @@ permissions:
     default: true
   daclans.command.top:
     default: true
+  daclans.command.info:
+    default: true
+  daclans.command.list:
+    default: true
+  daclans.command.members:
+    default: true
+  daclans.command.description:
+    default: true
+  daclans.command.logs:
+    default: true
+  daclans.command.logs.others:
+    default: op
+  daclans.command.cc:
+    default: true
+  daclans.command.ac:
+    default: true
+  daclans.command.version:
+    default: true
   daclans.command.color:
     default: true
   daclans.command.color.default:
@@ -53,6 +71,10 @@ permissions:
 dependencies:
   server:
     PlaceholderAPI:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    CarbonChat:
       load: BEFORE
       required: false
       join-classpath: true

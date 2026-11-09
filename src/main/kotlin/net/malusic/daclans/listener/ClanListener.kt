@@ -8,6 +8,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
@@ -22,11 +23,14 @@ class ClanListener(private val plugin: DaClans) : Listener {
     private val antiTeam = config.getBoolean("anti-teaming.enabled", false)
     private val threshold = config.getInt("anti-teaming.threshold", 2)
     private val windowMs = config.getLong("anti-teaming.window-seconds", 15L) * 1000L
+    private val clanCooldownMs = config.getLong("anti-teaming.per-clan-cooldown-seconds", 60L) * 1000L
+    private val lastSeenEnabled = config.getBoolean("clan.last-seen.enabled", true)
     private val blockBounty = plugin.hook("bountylite", "BountyLite") && !config.getBoolean("bounty.allow-on-teammates", false)
     private val bountyCommands = config.getStringList("bounty.commands").map { it.lowercase() }.toSet()
     private val bountySubs = config.getStringList("bounty.blocked-subcommands").map { it.lowercase() }.toSet()
     private val hits = ConcurrentHashMap<UUID, MutableList<Hit>>()
     private val warned = ConcurrentHashMap<UUID, Long>()
+    private val warnedClans = ConcurrentHashMap<UUID, Long>()
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onDamage(e: EntityDamageByEntityEvent) {
@@ -58,6 +62,8 @@ class ClanListener(private val plugin: DaClans) : Listener {
         list.add(Hit(attacker.uniqueId, clan.id, now))
         val group = list.filter { it.clan == clan.id || it.clan in clan.allies }
         if (group.size < threshold) return
+        if (now - (warnedClans[clan.id] ?: 0L) <= clanCooldownMs) return
+        warnedClans[clan.id] = now
         var issued = false
         for (hit in group) {
             val p = Bukkit.getPlayer(hit.attacker) ?: continue
@@ -80,8 +86,8 @@ class ClanListener(private val plugin: DaClans) : Listener {
         if (parts.size < 2 || parts[1].lowercase() !in bountySubs) return
         if (plugin.clans.ofPlayer(e.player.uniqueId) == null) return
         for (arg in parts.drop(1)) {
-            val target = Bukkit.getOfflinePlayerIfCached(arg) ?: continue
-            if (plugin.clans.areTeammates(e.player.uniqueId, target.uniqueId)) {
+            val target = resolveTarget(arg) ?: continue
+            if (plugin.clans.areTeammates(e.player.uniqueId, target)) {
                 e.isCancelled = true
                 plugin.messages.send(e.player, "bounty-blocked")
                 return
@@ -89,8 +95,21 @@ class ClanListener(private val plugin: DaClans) : Listener {
         }
     }
 
+    private fun resolveTarget(input: String): UUID? {
+        Bukkit.getPlayerExact(input)?.let { return it.uniqueId }
+        Bukkit.getOfflinePlayerIfCached(input)?.let { return it.uniqueId }
+        val offline = Bukkit.getOfflinePlayer(input)
+        return if (offline.hasPlayedBefore() || offline.name != null) offline.uniqueId else null
+    }
+
+    @EventHandler
+    fun onJoin(e: PlayerJoinEvent) {
+        if (lastSeenEnabled) plugin.clans.updateLastSeen(e.player.uniqueId)
+    }
+
     @EventHandler
     fun onQuit(e: PlayerQuitEvent) {
+        if (lastSeenEnabled) plugin.clans.updateLastSeen(e.player.uniqueId)
         hits.remove(e.player.uniqueId)
         warned.remove(e.player.uniqueId)
     }
