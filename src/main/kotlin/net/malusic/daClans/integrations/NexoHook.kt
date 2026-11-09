@@ -1,6 +1,5 @@
-package net.malusic.daclans.integrations
+package net.malusic.daclans
 
-import net.malusic.daclans.DaClans
 import org.bukkit.inventory.ItemStack
 
 object NexoHook {

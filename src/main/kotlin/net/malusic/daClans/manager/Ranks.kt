@@ -1,7 +1,5 @@
-package net.malusic.daclans.manager
+package net.malusic.daclans
 
-import net.malusic.daclans.DaClans
-import net.malusic.daclans.model.Clan
 import java.util.UUID
 
 class Ranks(private val plugin: DaClans) {

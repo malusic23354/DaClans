@@ -7,16 +7,17 @@ border:
 
 back:
   material: ARROW
-  nexoId: ""
   displayname: "<red>Back"
   glowing: false
   lore: []
 
+# State names are inserted as plain text, so keep them free of <tags>.
+# Their colour comes from the lore line that contains <state>.
 states:
-  open: "<green>Open"
-  closed: "<red>Invite only"
-  leader-only: "<red>Leader only"
-  everyone: "<green>Everyone"
+  open: "Open"
+  closed: "Invite only"
+  leader-only: "Leader only"
+  everyone: "Everyone"
 
 action-names:
   invite: "Invite"
@@ -33,7 +34,6 @@ permissions-gui:
 
 members-gui:
   material: PLAYER_HEAD
-  nexoId: ""
   displayname: "<white><player> <gray>(<rank>)"
   glowing: false
   lore:
@@ -44,7 +44,6 @@ items:
   upgrade:
     slot: 11
     material: EMERALD
-    nexoId: ""
     displayname: "<green>Upgrade clan size"
     glowing: false
     amount: 5
@@ -57,7 +56,6 @@ items:
   ranks:
     slot: 13
     material: GOLDEN_HELMET
-    nexoId: ""
     displayname: "<gold>Rank permissions"
     glowing: false
     lore:
@@ -65,7 +63,6 @@ items:
   members:
     slot: 15
     material: PLAYER_HEAD
-    nexoId: ""
     displayname: "<aqua>Promote / Demote"
     glowing: false
     lore:
@@ -73,18 +70,16 @@ items:
   open:
     slot: 30
     material: OAK_DOOR
-    nexoId: ""
     displayname: "<yellow>Clan access"
     glowing: false
     lore:
-      - "<gray>Current: <state>"
+      - "<gray>Current: <yellow><state>"
       - "<gray>Click to toggle"
   invite:
     slot: 32
     material: PAPER
-    nexoId: ""
     displayname: "<yellow>Who can invite"
     glowing: false
     lore:
-      - "<gray>Current: <state>"
+      - "<gray>Current: <yellow><state>"
       - "<gray>Click to toggle"

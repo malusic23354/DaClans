@@ -29,23 +29,17 @@ fun changelogFor(version: String): String {
     return lines.subList(start + 1, end).joinToString("\n").trim()
 }
 
-val localTokenFile = file(".gradle/gradle.properties")
-val localToken = if (localTokenFile.exists()) {
+val localTokenFile = file(".gradle/token.properties")
+val localToken =
     Properties()
         .apply { localTokenFile.inputStream().use { load(it) } }
         .getProperty("modrinthToken")
         ?.trim()
         ?.takeIf { it.isNotEmpty() }
-} else {
-    null
-}
-
-val modrinthToken = providers.gradleProperty("modrinthToken")
-    .let { provider -> if (localToken != null) provider.orElse(localToken) else provider }
 
 modrinth {
-    modrinthToken.orNull?.let { token.set(it) }
-    projectId.set("7k37mlVm")
+    token.set(localToken)
+    projectId.set("afNc21Ey")
     versionNumber.set(project.version.toString())
     versionType.set("release")
     changelog.set(changelogFor(project.version.toString()))
@@ -56,17 +50,7 @@ modrinth {
     dependencies {
         required.project("ayRaM8J7")
         optional.project("lKEzGugV")
-    }
-}
-
-tasks.named("modrinth") {
-    doFirst {
-        if (!modrinthToken.isPresent) {
-            throw GradleException(
-                "No Modrinth token found. Add 'modrinthToken=<token>' to " +
-                        File(gradle.gradleUserHomeDir, "gradle.properties")
-            )
-        }
+        optional.project("7k37mlVm")
     }
 }
 
@@ -123,7 +107,12 @@ tasks {
         dependsOn(copyPlugin)
         val dir = file("C:/Users/SKYMIL/Desktop/Main/Work/Coding/Java/MagicKPvP/run")
         workingDir = dir
-        commandLine("cmd", "/c", "start.bat")
+        val javaArgs = dir.resolve("start.bat").readLines()
+            .map { it.trim() }
+            .first { it.startsWith("java ") }
+            .removePrefix("java ")
+            .split(Regex("\\s+"))
+        commandLine("java", *javaArgs.toTypedArray())
         standardInput = System.`in`
     }
 }

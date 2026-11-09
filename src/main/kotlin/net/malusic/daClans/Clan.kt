@@ -1,4 +1,4 @@
-package net.malusic.daclans.model
+package net.malusic.daclans
 
 import java.util.UUID
 
@@ -14,5 +14,12 @@ class Clan(
     val members: MutableMap<UUID, String> = mutableMapOf(),
     val allies: MutableSet<UUID> = mutableSetOf(),
     val enemies: MutableSet<UUID> = mutableSetOf(),
-    val perms: MutableMap<String, String> = mutableMapOf()
-)
+    val perms: MutableMap<String, String> = mutableMapOf(),
+    var color: String = ""
+) {
+    fun coloredName(): String {
+        if (color.isBlank()) return name
+        val tag = color.removePrefix("<").removeSuffix(">")
+        return "$color$name</$tag>"
+    }
+}

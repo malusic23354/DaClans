@@ -1,6 +1,5 @@
-package net.malusic.daclans.storage
+package net.malusic.daclans
 
-import net.malusic.daclans.model.Clan
 import java.util.UUID
 
 interface ClanStorage {

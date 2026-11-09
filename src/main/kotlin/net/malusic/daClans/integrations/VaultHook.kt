@@ -1,4 +1,4 @@
-package net.malusic.daclans.integrations
+package net.malusic.daclans
 
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit

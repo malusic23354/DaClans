@@ -1,8 +1,6 @@
-package net.malusic.daclans.integrations
+package net.malusic.daclans
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
-import net.malusic.daclans.DaClans
-import net.malusic.daclans.manager.ClanManager
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 
@@ -23,7 +21,7 @@ class PlaceholderHook(private val plugin: DaClans) : PlaceholderExpansion() {
             val n = parts[1].toIntOrNull() ?: return null
             val clan = plugin.clans.top().getOrNull(n - 1) ?: return ""
             return when (parts[2]) {
-                "name" -> clan.name
+                "name" -> clan.coloredName()
                 "value" -> plugin.clans.topValue(clan)
                 "members" -> clan.members.size.toString()
                 else -> null
@@ -32,7 +30,7 @@ class PlaceholderHook(private val plugin: DaClans) : PlaceholderExpansion() {
         val p = player ?: return ""
         val clan = plugin.clans.ofPlayer(p.uniqueId) ?: return ""
         return when (params) {
-            "name" -> clan.name
+            "name" -> clan.coloredName()
             "leader" -> Bukkit.getOfflinePlayer(clan.leader).name ?: ""
             "members" -> clan.members.size.toString()
             "max_members" -> clan.maxMembers.toString()
@@ -41,5 +39,21 @@ class PlaceholderHook(private val plugin: DaClans) : PlaceholderExpansion() {
             "allies" -> clan.allies.size.toString()
             else -> null
         }
+    }
+}
+
+object PlaceholderBinding {
+
+    private var expansion: PlaceholderHook? = null
+
+    fun register(plugin: DaClans) {
+        val hook = PlaceholderHook(plugin)
+        hook.register()
+        expansion = hook
+    }
+
+    fun unregister() {
+        expansion?.unregister()
+        expansion = null
     }
 }

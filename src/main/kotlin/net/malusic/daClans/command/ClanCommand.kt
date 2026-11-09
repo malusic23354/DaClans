@@ -1,4 +1,4 @@
-package net.malusic.daclans.command
+package net.malusic.daclans
 
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.DoubleArgumentType
@@ -8,18 +8,25 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.Commands
-import net.malusic.daclans.DaClans
-import net.malusic.daclans.manager.ClanManager
-import net.malusic.daclans.model.Clan
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.UUID
+import java.util.logging.Level
 import kotlin.math.ceil
 import kotlin.math.max
 
 class ClanCommand(private val plugin: DaClans) {
 
-    private val nameRegex by lazy { Regex(plugin.config.getString("clan.name-regex", "[A-Za-z0-9_]{3,16}")!!) }
+    companion object {
+        private val NAMED_COLORS = setOf(
+            "black", "dark_blue", "dark_green", "dark_aqua", "dark_red", "dark_purple",
+            "gold", "gray", "dark_gray", "blue", "green", "aqua", "red", "light_purple",
+            "yellow", "white"
+        )
+        private val COLOR_ALIASES = mapOf("grey" to "gray", "dark_grey" to "dark_gray")
+    }
+
+    private val nameRegex get() = Regex(plugin.config.getString("clan.name-regex", "[A-Za-z0-9_]{3,16}")!!)
     private val inviteTtl get() = plugin.config.getLong("clan.invite-expiry-seconds", 60L) * 1000L
     private val allyTtl get() = plugin.config.getLong("clan.ally-request-expiry-seconds", 120L) * 1000L
 
@@ -45,6 +52,22 @@ class ClanCommand(private val plugin: DaClans) {
             .then(cmd("disband").executes { disband(it) })
             .then(cmd("rename").then(Commands.argument("name", StringArgumentType.word()).executes { rename(it) }))
             .then(
+                cmd("color").then(
+                    Commands.argument("color", StringArgumentType.greedyString())
+                        .suggests { ctx, builder ->
+                            val player = ctx.source.sender as? Player
+                            if (player == null || player.hasPermission("daclans.command.color.default")) {
+                                NAMED_COLORS.filter { it.startsWith(builder.remaining, true) }.forEach { builder.suggest(it) }
+                            }
+                            if (player != null && player.hasPermission("daclans.command.color.hex")) {
+                                builder.suggest("#RRGGBB")
+                            }
+                            builder.buildFuture()
+                        }
+                        .executes { color(it) }
+                )
+            )
+            .then(
                 cmd("invite").then(
                     Commands.argument("user", StringArgumentType.word())
                         .suggests { _, builder ->
@@ -64,6 +87,7 @@ class ClanCommand(private val plugin: DaClans) {
             .then(cmd("setowner").then(memberArg("user").executes { setOwner(it) }))
             .then(cmd("kick").then(memberArg("user").executes { kick(it) }))
             .then(cmd("settings").executes { settings(it) })
+            .then(cmd("reload").executes { reload(it) })
             .then(cmd("ally").then(clanArg("clan").executes { ally(it) }))
             .then(cmd("enemy").then(clanArg("clan").executes { enemy(it) }))
             .then(
@@ -155,10 +179,41 @@ class ClanCommand(private val plugin: DaClans) {
         }
     }
 
+    private fun color(ctx: CommandContext<CommandSourceStack>): Int = member(ctx, leaderOnly = true) { player, clan ->
+        val input = StringArgumentType.getString(ctx, "color")
+        val parsed = parseColor(input)
+        when {
+            parsed == null -> plugin.messages.send(player, "invalid-color", "color" to input)
+            !player.hasPermission(if (parsed.second) "daclans.command.color.hex" else "daclans.command.color.default") ->
+                plugin.messages.send(player, "no-permission")
+            else -> {
+                clan.color = parsed.first
+                plugin.clans.save(clan)
+                plugin.messages.send(player, "color-set")
+            }
+        }
+    }
+
+    private fun parseColor(input: String): Pair<String, Boolean>? {
+        val value = input.trim().removePrefix("<").removeSuffix(">")
+        if (value.startsWith("#")) {
+            val hex = value.substring(1)
+            if (hex.length == 6 && hex.all { it.isDigit() || it.lowercaseChar() in 'a'..'f' }) {
+                return "<#${hex.lowercase()}>" to true
+            }
+            if (hex.length == 3 && hex.all { it.isDigit() || it.lowercaseChar() in 'a'..'f' }) {
+                return "<#${hex.map { "$it$it" }.joinToString("").lowercase()}>" to true
+            }
+            return null
+        }
+        val name = COLOR_ALIASES[value.lowercase()] ?: value.lowercase()
+        return if (name in NAMED_COLORS) "<$name>" to false else null
+    }
+
     private fun invite(ctx: CommandContext<CommandSourceStack>): Int = member(ctx) { player, clan ->
         val target = Bukkit.getPlayerExact(StringArgumentType.getString(ctx, "user"))
         val allowed = clan.leader == player.uniqueId ||
-            (!clan.inviteLeaderOnly && plugin.ranks.canDo(clan, player.uniqueId, "invite"))
+                (!clan.inviteLeaderOnly && plugin.ranks.canDo(clan, player.uniqueId, "invite"))
         when {
             !allowed -> plugin.messages.send(player, "invite-no-permission")
             target == null -> plugin.messages.send(player, "player-not-found")
@@ -247,6 +302,18 @@ class ClanCommand(private val plugin: DaClans) {
 
     private fun settings(ctx: CommandContext<CommandSourceStack>): Int = member(ctx, need = "settings") { player, clan ->
         plugin.gui.open(player, clan)
+    }
+
+    private fun reload(ctx: CommandContext<CommandSourceStack>): Int {
+        val sender = ctx.source.sender
+        try {
+            plugin.reloadAll()
+            plugin.messages.send(sender, "reload-success")
+        } catch (e: Exception) {
+            plugin.logger.log(Level.SEVERE, "Failed to reload configuration", e)
+            plugin.messages.send(sender, "reload-failed")
+        }
+        return Command.SINGLE_SUCCESS
     }
 
     private fun ally(ctx: CommandContext<CommandSourceStack>): Int = member(ctx, leaderOnly = true) { player, clan ->

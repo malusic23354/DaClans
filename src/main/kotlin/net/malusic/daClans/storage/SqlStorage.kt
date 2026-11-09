@@ -1,6 +1,5 @@
-package net.malusic.daclans.storage
+package net.malusic.daclans
 
-import net.malusic.daclans.model.Clan
 import java.sql.Connection
 import java.sql.Driver
 import java.util.Properties
@@ -27,8 +26,12 @@ class SqlStorage(
                 it.execute(
                     "CREATE TABLE IF NOT EXISTS clans (id VARCHAR(36) PRIMARY KEY, name VARCHAR(32) NOT NULL UNIQUE, leader VARCHAR(36) NOT NULL, " +
                         "bank DOUBLE NOT NULL, created_at BIGINT NOT NULL, is_open TINYINT NOT NULL DEFAULT 0, invite_leader_only TINYINT NOT NULL DEFAULT 1, " +
-                        "max_members INT NOT NULL DEFAULT 10, allies TEXT, enemies TEXT, perms TEXT)"
+                        "max_members INT NOT NULL DEFAULT 10, allies TEXT, enemies TEXT, perms TEXT, color VARCHAR(32) NOT NULL DEFAULT '')"
                 )
+                try {
+                    it.execute("ALTER TABLE clans ADD COLUMN color VARCHAR(32) NOT NULL DEFAULT ''")
+                } catch (_: Exception) {
+                }
                 it.execute("CREATE TABLE IF NOT EXISTS members (clan_id VARCHAR(36) NOT NULL, player VARCHAR(36) NOT NULL PRIMARY KEY, role VARCHAR(32) NOT NULL)")
             }
         }.get()
@@ -63,7 +66,7 @@ class SqlStorage(
         val c = conn()
         val clans = HashMap<UUID, Clan>()
         c.createStatement().use { st ->
-            st.executeQuery("SELECT id, name, leader, bank, created_at, is_open, invite_leader_only, max_members, allies, enemies, perms FROM clans").use { rs ->
+            st.executeQuery("SELECT id, name, leader, bank, created_at, is_open, invite_leader_only, max_members, allies, enemies, perms, color FROM clans").use { rs ->
                 while (rs.next()) {
                     val clan = Clan(
                         UUID.fromString(rs.getString(1)),
@@ -81,6 +84,7 @@ class SqlStorage(
                         val parts = it.split("=", limit = 2)
                         clan.perms[parts[0]] = parts[1]
                     }
+                    clan.color = rs.getString(12).orEmpty()
                     clans[clan.id] = clan
                 }
             }
@@ -108,12 +112,13 @@ class SqlStorage(
         val allies = clan.allies.joinToString(",")
         val enemies = clan.enemies.joinToString(",")
         val perms = clan.perms.entries.joinToString(";") { "${it.key}=${it.value}" }
+        val color = clan.color
         val members = clan.members.entries.map { it.key.toString() to it.value }
         run { c ->
             c.autoCommit = false
             try {
                 c.prepareStatement(
-                    "REPLACE INTO clans (id, name, leader, bank, created_at, is_open, invite_leader_only, max_members, allies, enemies, perms) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                    "REPLACE INTO clans (id, name, leader, bank, created_at, is_open, invite_leader_only, max_members, allies, enemies, perms, color) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                 ).use {
                     it.setString(1, id)
                     it.setString(2, name)
@@ -126,6 +131,7 @@ class SqlStorage(
                     it.setString(9, allies)
                     it.setString(10, enemies)
                     it.setString(11, perms)
+                    it.setString(12, color)
                     it.executeUpdate()
                 }
                 c.prepareStatement("DELETE FROM members WHERE clan_id = ?").use {

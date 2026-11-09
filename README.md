@@ -79,6 +79,7 @@ The main command is `/clan`, with the aliases `/clans` and `/daclans`.
 | `/clan create <name>` | Create a clan | Anyone not in a clan |
 | `/clan disband` | Delete your clan | Leader |
 | `/clan rename <name>` | Rename your clan | Minimum rank set for `rename` |
+| `/clan color <color>` | Set the color used for the clan name in `%daclans_name%` | Leader |
 | `/clan invite <player>` | Invite an online player | Leader, or the minimum rank set for `invite` if invites are open to ranks |
 | `/clan join [clan]` | Join a clan you were invited to, or any open clan | Anyone not in a clan |
 | `/clan leave` | Leave your clan | Members (leaders cannot leave) |
@@ -99,11 +100,14 @@ The main command is `/clan`, with the aliases `/clans` and `/daclans`.
 
 All `daclans.command.*` permissions are granted to players by default. In-game rank checks apply on top of them.
 
+`/clan color` checks the color type separately: named colors need `daclans.command.color.default`, and hex colors need `daclans.command.color.hex`. The base `daclans.command.color` permission is required for both.
+
 | Command | Permission |
 |---|---|
 | `/clan create <name>` | `daclans.command.create` |
 | `/clan disband` | `daclans.command.disband` |
 | `/clan rename <name>` | `daclans.command.rename` |
+| `/clan color <color>` | `daclans.command.color` plus `daclans.command.color.default` or `daclans.command.color.hex` |
 | `/clan invite <player>` | `daclans.command.invite` |
 | `/clan join [clan]` | `daclans.command.join` |
 | `/clan leave` | `daclans.command.leave` |
@@ -148,7 +152,7 @@ Requires PlaceholderAPI. The identifier is `daclans`.
 
 | Placeholder | Description |
 |---|---|
-| `%daclans_name%` | The player's clan name |
+| `%daclans_name%` | The player's clan name, prefixed with the MiniMessage color set by `/clan color` |
 | `%daclans_leader%` | Name of the clan leader |
 | `%daclans_members%` | Current member count |
 | `%daclans_max_members%` | Member limit |

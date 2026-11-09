@@ -1,10 +1,7 @@
-package net.malusic.daclans.gui
+package net.malusic.daclans
 
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import net.malusic.daclans.DaClans
-import net.malusic.daclans.manager.ClanManager
-import net.malusic.daclans.model.Clan
 import net.malusic.daclans.util.ItemFactory
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration

@@ -5,7 +5,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.format.TextDecoration
 import net.malusic.daclans.DaClans
-import net.malusic.daclans.integrations.NexoHook
+import net.malusic.daclans.NexoHook
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.inventory.ItemStack

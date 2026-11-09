@@ -1,7 +1,5 @@
-package net.malusic.daclans.manager
+package net.malusic.daclans
 
-import net.malusic.daclans.model.Clan
-import net.malusic.daclans.storage.ClanStorage
 import java.util.Locale
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap

@@ -1,17 +1,10 @@
 package net.malusic.daclans
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
-import net.malusic.daclans.command.ClanCommand
-import net.malusic.daclans.gui.SettingsGui
-import net.malusic.daclans.integrations.PlaceholderHook
-import net.malusic.daclans.integrations.VaultHook
-import net.malusic.daclans.listener.ClanListener
-import net.malusic.daclans.manager.ClanManager
-import net.malusic.daclans.manager.Ranks
-import net.malusic.daclans.storage.ClanStorage
-import net.malusic.daclans.storage.StorageFactory
 import net.malusic.daclans.util.Messages
+import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitTask
 
 class DaClans : JavaPlugin() {
 
@@ -28,6 +21,10 @@ class DaClans : JavaPlugin() {
     var economy: VaultHook? = null
         private set
 
+    private var clanListener: ClanListener? = null
+    private var topTask: BukkitTask? = null
+    private var placeholdersActive = false
+
     fun hook(key: String, pluginName: String): Boolean =
         config.getBoolean("hooks.$key", false) && server.pluginManager.isPluginEnabled(pluginName)
 
@@ -37,16 +34,10 @@ class DaClans : JavaPlugin() {
         ranks = Ranks(this)
         storage = StorageFactory.create(this)
         clans = ClanManager(storage)
-        clans.sort = config.getString("leaderboard.sort", "bank")!!
         clans.load()
-        clans.refreshTop()
         gui = SettingsGui(this)
         server.pluginManager.registerEvents(gui, this)
-        server.pluginManager.registerEvents(ClanListener(this), this)
-        if (hook("vault", "Vault")) economy = VaultHook()
-        if (hook("placeholderapi", "PlaceholderAPI")) registerPlaceholders()
-        val period = config.getLong("leaderboard.refresh-seconds", 60L) * 20L
-        server.scheduler.runTaskTimer(this, Runnable { clans.refreshTop() }, period, period)
+        applyConfig()
         lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS) { event ->
             ClanCommand(this).register(event.registrar())
         }
@@ -57,7 +48,36 @@ class DaClans : JavaPlugin() {
         if (::storage.isInitialized) storage.close()
     }
 
-    private fun registerPlaceholders() {
-        PlaceholderHook(this).register()
+    fun reloadAll() {
+        reloadConfig()
+        ranks = Ranks(this)
+        gui.reload()
+        applyConfig()
+    }
+
+    private fun applyConfig() {
+        clans.sort = config.getString("leaderboard.sort", "bank")!!
+        clans.refreshTop()
+
+        economy = if (hook("vault", "Vault")) VaultHook() else null
+        syncPlaceholders()
+
+        clanListener?.let { HandlerList.unregisterAll(it) }
+        clanListener = ClanListener(this).also { server.pluginManager.registerEvents(it, this) }
+
+        topTask?.cancel()
+        val period = config.getLong("leaderboard.refresh-seconds", 60L) * 20L
+        topTask = server.scheduler.runTaskTimer(this, Runnable { clans.refreshTop() }, period, period)
+    }
+
+    private fun syncPlaceholders() {
+        val wanted = hook("placeholderapi", "PlaceholderAPI")
+        if (wanted && !placeholdersActive) {
+            PlaceholderBinding.register(this)
+            placeholdersActive = true
+        } else if (!wanted && placeholdersActive) {
+            PlaceholderBinding.unregister()
+            placeholdersActive = false
+        }
     }
 }

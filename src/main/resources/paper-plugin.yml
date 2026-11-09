@@ -1,5 +1,5 @@
 name: DaClans
-version: "0.1.1"
+version: "0.1.2"
 main: net.malusic.daclans.DaClans
 loader: net.malusic.daclans.DaClansLoader
 api-version: "1.21.11"
@@ -40,6 +40,14 @@ permissions:
     default: true
   daclans.command.top:
     default: true
+  daclans.command.color:
+    default: true
+  daclans.command.color.default:
+    default: true
+  daclans.command.color.hex:
+    default: true
+  daclans.command.reload:
+    default: op
   daclans.antiteam.notify:
     default: op
 dependencies:

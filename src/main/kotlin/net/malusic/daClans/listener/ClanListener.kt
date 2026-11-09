@@ -1,7 +1,5 @@
-package net.malusic.daclans.listener
+package net.malusic.daclans
 
-import net.malusic.daclans.DaClans
-import net.malusic.daclans.model.Clan
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile

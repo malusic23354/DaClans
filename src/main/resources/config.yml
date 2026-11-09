@@ -26,7 +26,6 @@ ranks:
     level: 1
     displayname: "<gray>Member"
     material: IRON_INGOT
-    nexoId: ""
     glowing: false
     lore:
       - "<dark_gray>Basic clan rank"
@@ -34,7 +33,6 @@ ranks:
     level: 2
     displayname: "<yellow>Officer"
     material: GOLD_INGOT
-    nexoId: ""
     glowing: false
     lore:
       - "<dark_gray>Trusted clan rank"
@@ -42,7 +40,6 @@ ranks:
     level: 3
     displayname: "<gold>Co-Leader"
     material: DIAMOND
-    nexoId: ""
     glowing: false
     lore:
       - "<dark_gray>Second in command"
@@ -50,7 +47,6 @@ ranks:
     level: 100
     displayname: "<red>Leader"
     material: NETHERITE_INGOT
-    nexoId: ""
     glowing: true
     lore:
       - "<dark_gray>Clan owner"
@@ -99,6 +95,8 @@ messages:
   created: "<green>Clan <name> created."
   disbanded: "<yellow>Clan <name> was disbanded."
   renamed: "<green>Clan renamed to <name>."
+  color-set: "<green>Clan color updated."
+  invalid-color: "<red>Invalid color. Use a named color or a hex color like #ff0000."
   invite-no-permission: "<red>You cannot invite players."
   player-not-found: "<red>Player not found."
   invite-self: "<red>You cannot invite yourself."
@@ -142,3 +140,5 @@ messages:
   anti-team-warning: "<red>Teaming against neutral players is not allowed."
   anti-team-staff: "<yellow><clan> members are teaming on <victim>."
   bounty-blocked: "<red>You cannot place bounties on your teammates."
+  reload-success: "<green>Configuration reloaded."
+  reload-failed: "<red>Reload failed. Check the console for details."

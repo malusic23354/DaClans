@@ -1,4 +1,4 @@
-package net.malusic.daclans.storage
+package net.malusic.daclans
 
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
