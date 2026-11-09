@@ -2,7 +2,7 @@ name: DaClans
 version: "0.1.1"
 main: net.malusic.daclans.DaClans
 loader: net.malusic.daclans.DaClansLoader
-api-version: "1.21"
+api-version: "1.21.11"
 description: Simple clans plugin
 authors: [Malusic]
 permissions:
