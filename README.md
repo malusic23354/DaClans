@@ -5,7 +5,7 @@
 **A simple, configurable clans plugin for Paper servers, with ranks, alliances, a clan bank and anti-teaming.**
 
 [![Version](https://img.shields.io/badge/version-0.1.2-blue)](https://modrinth.com/plugin/daclans)
-[![Platform](https://img.shields.io/badge/platform-Paper%20%7C%20Purpur-lightgrey)](https://papermc.io/)
+[![Platform](https://img.shields.io/badge/platform-Paper-lightgrey)](https://papermc.io/)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21.11%20%2B-brightgreen)](https://papermc.io/)
 [![Language](https://img.shields.io/badge/language-Kotlin-7F52FF)](https://kotlinlang.org/)
 [![Java](https://img.shields.io/badge/java-21%2B-orange)](https://adoptium.net/)
