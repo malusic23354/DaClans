@@ -1,0 +1,62 @@
+name: DaClans
+version: "0.1.1"
+main: net.malusic.daclans.DaClans
+loader: net.malusic.daclans.DaClansLoader
+api-version: "1.21"
+description: Simple clans plugin
+authors: [Malusic]
+permissions:
+  daclans.command.create:
+    default: true
+  daclans.command.disband:
+    default: true
+  daclans.command.rename:
+    default: true
+  daclans.command.invite:
+    default: true
+  daclans.command.join:
+    default: true
+  daclans.command.leave:
+    default: true
+  daclans.command.promote:
+    default: true
+  daclans.command.demote:
+    default: true
+  daclans.command.setowner:
+    default: true
+  daclans.command.kick:
+    default: true
+  daclans.command.settings:
+    default: true
+  daclans.command.ally:
+    default: true
+  daclans.command.enemy:
+    default: true
+  daclans.command.warn:
+    default: true
+  daclans.command.deposit:
+    default: true
+  daclans.command.withdraw:
+    default: true
+  daclans.command.top:
+    default: true
+  daclans.antiteam.notify:
+    default: op
+dependencies:
+  server:
+    PlaceholderAPI:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    Vault:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    Nexo:
+      load: BEFORE
+      required: false
+      join-classpath: true
+    BountyLite:
+      load: BEFORE
+      required: false
+      join-classpath: true

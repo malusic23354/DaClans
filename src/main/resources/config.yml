@@ -1,0 +1,144 @@
+storage:
+  type: sqlite
+  sqlite:
+    file: clans.db
+  mysql:
+    host: localhost
+    port: 3306
+    database: daclans
+    username: root
+    password: ""
+
+hooks:
+  placeholderapi: true
+  nexo: true
+  bountylite: true
+  vault: true
+
+clan:
+  name-regex: "[A-Za-z0-9_]{3,16}"
+  max-members: 10
+  invite-expiry-seconds: 60
+  ally-request-expiry-seconds: 120
+
+ranks:
+  member:
+    level: 1
+    displayname: "<gray>Member"
+    material: IRON_INGOT
+    nexoId: ""
+    glowing: false
+    lore:
+      - "<dark_gray>Basic clan rank"
+  officer:
+    level: 2
+    displayname: "<yellow>Officer"
+    material: GOLD_INGOT
+    nexoId: ""
+    glowing: false
+    lore:
+      - "<dark_gray>Trusted clan rank"
+  coleader:
+    level: 3
+    displayname: "<gold>Co-Leader"
+    material: DIAMOND
+    nexoId: ""
+    glowing: false
+    lore:
+      - "<dark_gray>Second in command"
+  leader:
+    level: 100
+    displayname: "<red>Leader"
+    material: NETHERITE_INGOT
+    nexoId: ""
+    glowing: true
+    lore:
+      - "<dark_gray>Clan owner"
+
+default-permissions:
+  invite: member
+  kick: officer
+  rename: leader
+  settings: coleader
+  warn: officer
+
+damage-reduction:
+  clan: 0
+  allies: 0
+
+anti-teaming:
+  enabled: true
+  threshold: 2
+  window-seconds: 15
+
+leaderboard:
+  enabled: true
+  sort: bank
+  page-size: 10
+  refresh-seconds: 60
+
+bounty:
+  allow-on-teammates: false
+  commands:
+    - bounty
+  blocked-subcommands:
+    - set
+    - bet
+
+messages:
+  player-only: "<red>Players only."
+  no-permission: "<red>You do not have permission to do that."
+  already-in-clan: "<red>You are already in a clan."
+  not-in-clan: "<red>You are not in a clan."
+  not-leader: "<red>Only the clan leader can do this."
+  not-member: "<red>That player is not in your clan."
+  invalid-name: "<red>Invalid clan name."
+  invalid-target: "<red>Invalid target."
+  name-taken: "<red>The clan <name> already exists."
+  no-such-clan: "<red>Clan <name> does not exist."
+  created: "<green>Clan <name> created."
+  disbanded: "<yellow>Clan <name> was disbanded."
+  renamed: "<green>Clan renamed to <name>."
+  invite-no-permission: "<red>You cannot invite players."
+  player-not-found: "<red>Player not found."
+  invite-self: "<red>You cannot invite yourself."
+  target-in-clan: "<red><player> is already in a clan."
+  clan-full: "<red>The clan is full."
+  invited: "<green>Invited <player>."
+  invite-received: "<yellow><player> invited you to <name>. Use /clan join <name>"
+  join-specify: "<red>Specify the clan to join."
+  no-invite: "<red><name> is invite only."
+  joined: "<green>You joined <name>."
+  member-joined: "<yellow><player> joined the clan."
+  leader-cannot-leave: "<red>Leaders cannot leave. Disband or transfer ownership."
+  left: "<yellow>You left <name>."
+  member-left: "<yellow><player> left the clan."
+  member-kicked: "<yellow><player> was kicked from the clan."
+  you-kicked: "<red>You were kicked from <name>."
+  promoted: "<green><player> was promoted to <rank>."
+  demoted: "<yellow><player> was demoted to <rank>."
+  rank-limit: "<red>That player cannot be moved further."
+  owner-set: "<gold><player> is now the clan leader."
+  ally-request: "<yellow><name> wants to ally. Leaders can accept with /clan ally <name>"
+  ally-sent: "<green>Alliance request sent to <name>."
+  ally-made: "<green>You are now allied with <name>."
+  ally-broken: "<yellow>Alliance with <name> ended."
+  enemy-set: "<red><name> is now your enemy."
+  enemy-cleared: "<yellow><name> is no longer your enemy."
+  enemy-notice: "<red><name> declared you an enemy."
+  warn-sent: "<green>Warned <player>."
+  warn-received: "<red>Warning from <player>: <warning>"
+  no-economy: "<red>Economy is not available."
+  insufficient-funds: "<red>You do not have enough money."
+  bank-insufficient: "<red>The clan bank does not have that amount."
+  deposited: "<green>Deposited <amount> into the clan bank."
+  withdrawn: "<green>Withdrew <amount> from the clan bank."
+  leaderboard-disabled: "<red>The leaderboard is disabled."
+  top-header: "<gold>Top clans (<page>/<pages>)"
+  top-line: "<gray><rank>. <white><name> <yellow><value>"
+  upgrade-max: "<red>The clan is already at the maximum size."
+  upgrade-no-funds: "<red>The clan bank needs <cost>."
+  upgraded: "<green>Clan size is now <max>."
+  anti-team-warning: "<red>Teaming against neutral players is not allowed."
+  anti-team-staff: "<yellow><clan> members are teaming on <victim>."
+  bounty-blocked: "<red>You cannot place bounties on your teammates."

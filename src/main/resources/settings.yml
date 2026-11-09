@@ -1,0 +1,90 @@
+size: 45
+title: "<dark_gray>Clan <clan>"
+
+border:
+  material: BLACK_STAINED_GLASS_PANE
+  displayname: " "
+
+back:
+  material: ARROW
+  nexoId: ""
+  displayname: "<red>Back"
+  glowing: false
+  lore: []
+
+states:
+  open: "<green>Open"
+  closed: "<red>Invite only"
+  leader-only: "<red>Leader only"
+  everyone: "<green>Everyone"
+
+action-names:
+  invite: "Invite"
+  kick: "Kick"
+  rename: "Rename"
+  settings: "Settings"
+  warn: "Warn"
+
+permissions-gui:
+  name: "<white><action>: <rank>"
+  lore:
+    - "<gray>Left click: next rank"
+    - "<gray>Right click: previous rank"
+
+members-gui:
+  material: PLAYER_HEAD
+  nexoId: ""
+  displayname: "<white><player> <gray>(<rank>)"
+  glowing: false
+  lore:
+    - "<gray>Left click: promote"
+    - "<gray>Right click: demote"
+
+items:
+  upgrade:
+    slot: 11
+    material: EMERALD
+    nexoId: ""
+    displayname: "<green>Upgrade clan size"
+    glowing: false
+    amount: 5
+    max: 50
+    cost: 1000.0
+    lore:
+      - "<gray>Members: <white><members>/<max>"
+      - "<gray>Adds <white><amount> <gray>slots"
+      - "<gray>Cost: <yellow><cost>"
+  ranks:
+    slot: 13
+    material: GOLDEN_HELMET
+    nexoId: ""
+    displayname: "<gold>Rank permissions"
+    glowing: false
+    lore:
+      - "<gray>Choose the minimum rank for each action"
+  members:
+    slot: 15
+    material: PLAYER_HEAD
+    nexoId: ""
+    displayname: "<aqua>Promote / Demote"
+    glowing: false
+    lore:
+      - "<gray>Manage member ranks"
+  open:
+    slot: 30
+    material: OAK_DOOR
+    nexoId: ""
+    displayname: "<yellow>Clan access"
+    glowing: false
+    lore:
+      - "<gray>Current: <state>"
+      - "<gray>Click to toggle"
+  invite:
+    slot: 32
+    material: PAPER
+    nexoId: ""
+    displayname: "<yellow>Who can invite"
+    glowing: false
+    lore:
+      - "<gray>Current: <state>"
+      - "<gray>Click to toggle"
