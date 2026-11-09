@@ -6,7 +6,7 @@
 [![Platform](https://img.shields.io/badge/platform-Paper%20%7C%20Purpur-lightgrey)](https://papermc.io/)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21.11%20%2B-brightgreen)](https://papermc.io/)
 [![Language](https://img.shields.io/badge/language-Kotlin-7F52FF)](https://kotlinlang.org/)
-[![Java](https://img.shields.io/badge/java-21-orange)](https://adoptium.net/)
+[![Java](https://img.shields.io/badge/java-21%2B-orange)](https://adoptium.net/)
 
 DaClans lets players form clans, invite friends, climb a rank ladder, ally with other clans and pool money in a shared bank. Server owners get a fully configurable rank system, damage rules between teammates and an anti-teaming check against neutral players.
 
@@ -48,6 +48,7 @@ DaClans lets players form clans, invite friends, climb a rank ladder, ally with 
 - PlaceholderAPI placeholders
 - Nexo custom items for GUI and rank icons
 - MiniMessage formatting for every message and menu item
+- `/clan reload` applies configuration, rank, GUI, hook and leaderboard changes without a restart
 - SQLite by default, MySQL optional
 
 ## Requirements
@@ -95,11 +96,12 @@ The main command is `/clan`, with the aliases `/clans` and `/daclans`.
 | `/clan deposit <amount>` | Add money to the clan bank | Members |
 | `/clan withdraw [amount]` | Take money from the bank, or everything if no amount is given | Leader |
 | `/clan top [page]` | Show the clan leaderboard | Anyone |
+| `/clan reload` | Reload the configuration, ranks, GUI, hooks and leaderboard task | Op |
 
 <details>
 <summary><b>Permissions</b></summary>
 
-All `daclans.command.*` permissions are granted to players by default. In-game rank checks apply on top of them.
+All `daclans.command.*` permissions are granted to players by default, except `daclans.command.reload`, which defaults to op. In-game rank checks apply on top of them.
 
 `/clan color` checks the color type separately: named colors need `daclans.command.color.default`, and hex colors need `daclans.command.color.hex`. The base `daclans.command.color` permission is required for both.
 
@@ -123,9 +125,11 @@ All `daclans.command.*` permissions are granted to players by default. In-game r
 | `/clan deposit <amount>` | `daclans.command.deposit` |
 | `/clan withdraw [amount]` | `daclans.command.withdraw` |
 | `/clan top [page]` | `daclans.command.top` |
+| `/clan reload` | `daclans.command.reload` |
 
 | Permission | Description | Default |
 |---|---|---|
+| `daclans.command.reload` | Reload the plugin configuration | op |
 | `daclans.antiteam.notify` | Receive a staff notice when clan members are teaming on a player | op |
 
 </details>
@@ -218,7 +222,6 @@ ranks:
     level: 2
     displayname: "<yellow>Officer"
     material: GOLD_INGOT
-    nexoId: ""           # use a Nexo item instead of the material
     glowing: false
     lore:
       - "<dark_gray>Trusted clan rank"
@@ -269,13 +272,27 @@ The `clans` and `members` tables are created automatically on first start. The d
 
 ## Building from source
 
+The project uses the Gradle 9.8.0 wrapper and targets Java 21 bytecode, so a JDK 21 or newer is required to build:
+
 ```bash
 git clone https://github.com/malusic23354/DaClans.git
 cd DaClans
 ./gradlew build
 ```
 
-The plugin jar is written to `build/libs/DaClans-<version>.jar`. Java 21 is required.
+The plugin jar is written to `build/libs/DaClans-<version>.jar`.
+
+### Testing on a local server
+
+`./gradlew runServer` builds the plugin, copies it to the test server's `plugins` folder and starts the server with Aikar's flags. Stopping the Gradle task stops the server.
+
+The included test-server setup runs from `MagicKPvP/run` and launches Minecraft 26.3 with Java 26, because Minecraft 26.1 and newer requires Java 25 or above. The server JDK is configured in `gradle.properties`:
+
+```properties
+serverJavaHome=C:/Program Files/Java/jdk-26.0.1
+```
+
+If your test server lives elsewhere or uses a different JDK, update `serverJavaHome`, and the `copyPlugin` and `runServer` paths in `build.gradle.kts`, accordingly.
 
 ## Support
 
