@@ -2,7 +2,7 @@
 
 **A simple, configurable clans plugin for Paper servers, with ranks, alliances, a clan bank and anti-teaming.**
 
-[![Version](https://img.shields.io/badge/version-0.1.1-blue)](https://modrinth.com/plugin/daclans)
+[![Version](https://img.shields.io/badge/version-0.1.2-blue)](https://modrinth.com/plugin/daclans)
 [![Platform](https://img.shields.io/badge/platform-Paper%20%7C%20Purpur-lightgrey)](https://papermc.io/)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21.11%20%2B-brightgreen)](https://papermc.io/)
 [![Language](https://img.shields.io/badge/language-Kotlin-7F52FF)](https://kotlinlang.org/)
@@ -19,6 +19,7 @@ DaClans lets players form clans, invite friends, climb a rank ladder, ally with 
 - Invite players (invites expire) or leave the clan open so anyone can join
 - Configurable name pattern and member limit
 - Transfer ownership with `/clan setowner`
+- Set the clan name color with `/clan color <color>`, using named colors or hex values
 
 **Ranks and permissions**
 - Four default ranks: Member, Officer, Co-Leader and Leader
@@ -54,7 +55,7 @@ DaClans lets players form clans, invite friends, climb a rank ladder, ally with 
 | Requirement | Details |
 |---|---|
 | Server | Paper or Purpur 1.21.11 or newer |
-| Java | 21 or newer |
+| Java | 21 or newer, or 25 or newer on Minecraft 26.1+ |
 | [Vault](https://www.spigotmc.org/resources/vault.34315/) | Optional, needed for `/clan deposit` and `/clan withdraw` |
 | Economy plugin | Optional, any Vault-compatible provider |
 | [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) | Optional, enables the placeholders below |
@@ -66,7 +67,7 @@ DaClans lets players form clans, invite friends, climb a rank ladder, ally with 
 1. Download the latest release from [Modrinth](https://modrinth.com/plugin/daclans).
 2. Drop the jar into your server's `plugins` folder.
 3. Start the server once to generate the default files, then edit them in `plugins/DaClans/`.
-4. Restart the server to apply configuration changes.
+4. Run `/clan reload` or restart the server to apply configuration changes.
 
 `config.yml` and `settings.yml` are generated on first start and are never overwritten by updates.
 
