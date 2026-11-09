@@ -1,4 +1,4 @@
-<div style="text-align: center;"><h1>DaClans</h1>
+<div style="text-align: center;"><h1>DaClans</h1></div>
 
 **A simple, configurable clans plugin for Paper servers, with ranks, alliances, a clan bank and anti-teaming.**
 
@@ -6,8 +6,7 @@
 [![Platform](https://img.shields.io/badge/platform-Paper%20%7C%20Purpur-lightgrey)](https://papermc.io/)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21.11%20%2B-brightgreen)](https://papermc.io/)
 [![Language](https://img.shields.io/badge/language-Kotlin-7F52FF)](https://kotlinlang.org/)
-[![Java](https://img.shields.io/badge/java-21%2B-orange)](https://adoptium.net/)</div>
-
+[![Java](https://img.shields.io/badge/java-21%2B-orange)](https://adoptium.net/)
 DaClans lets players form clans, invite friends, climb a rank ladder, ally with other clans and pool money in a shared bank. Server owners get a fully configurable rank system, damage rules between teammates and an anti-teaming check against neutral players.
 
 > Built on the Paper Brigadier command API and Paper plugin descriptor (`paper-plugin.yml`).
