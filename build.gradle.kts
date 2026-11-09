@@ -41,7 +41,7 @@ modrinth {
     token.set(localToken)
     projectId.set("afNc21Ey")
     versionNumber.set(project.version.toString())
-    versionType.set("release")
+    versionType.set("beta")
     changelog.set(changelogFor(project.version.toString()))
     uploadFile.set(tasks.shadowJar)
     gameVersions.addAll(listOf("1.21.11", "26.1", "26.2", "26.3"))
