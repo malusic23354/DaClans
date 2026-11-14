@@ -1,6 +1,8 @@
-.gradle
-.kotlin
-build
+.gradle/
+.github/
+.idea/
+.kotlin/
+build/
 out/
-./dev.gradle.kts
-./release.init.gradle.kts
+dev.gradle.kts
+release.init.gradle.kts
