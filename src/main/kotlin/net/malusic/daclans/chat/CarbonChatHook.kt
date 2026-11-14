@@ -13,7 +13,6 @@ import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import net.malusic.daclans.Clan
 import net.malusic.daclans.DaClans
 import java.util.UUID
 
