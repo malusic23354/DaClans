@@ -39,6 +39,7 @@ clan:
 
 chat:
   enabled: true
+  prefix: "[<clan>] "
   clan-format: "<gray>[Clan] <white><player>: <message>"
   ally-format: "<gray>[Ally] <white><player>: <message>"
   carbon:
