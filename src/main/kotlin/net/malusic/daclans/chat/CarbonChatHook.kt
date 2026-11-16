@@ -2,6 +2,7 @@ package net.malusic.daclans.chat
 
 import net.draycia.carbon.api.CarbonChatProvider
 import net.draycia.carbon.api.channels.ChannelPermissionResult
+import net.draycia.carbon.api.channels.ChannelPermissions
 import net.draycia.carbon.api.channels.ChannelRegistry
 import net.draycia.carbon.api.channels.ChatChannel
 import net.draycia.carbon.api.event.CarbonEventSubscriber
@@ -52,12 +53,13 @@ object CarbonChatHook {
         }
     }
 
-    private fun clanSpeech(plugin: DaClans, player: CarbonPlayer): ChannelPermissionResult =
+    private fun clanPermissions(plugin: DaClans): ChannelPermissions = ChannelPermissions.uniformDynamic { player ->
         if (plugin.clans.ofPlayer(player.uuid()) != null) {
             ChannelPermissionResult.allowed()
         } else {
             ChannelPermissionResult.denied(Component.text("You are not in a clan."))
         }
+    }
 
     private fun clanRecipients(plugin: DaClans, sender: CarbonPlayer, ally: Boolean): List<Audience> {
         val clan = plugin.clans.ofPlayer(sender.uuid()) ?: return emptyList()
@@ -75,11 +77,7 @@ object CarbonChatHook {
 
         override fun key(): Key = if (ally) allyKey else clanKey
 
-        override fun speechPermitted(carbonPlayer: CarbonPlayer): ChannelPermissionResult = clanSpeech(plugin, carbonPlayer)
-
-        override fun hearingPermitted(player: CarbonPlayer): ChannelPermissionResult = ChannelPermissionResult.allowed()
-
-        override fun permission(): String = "daclans.chat"
+        override fun permissions(): ChannelPermissions = clanPermissions(plugin)
 
         override fun recipients(sender: CarbonPlayer): List<Audience> = clanRecipients(plugin, sender, ally)
 
@@ -94,6 +92,14 @@ object CarbonChatHook {
         override fun radius(): Double = -1.0
 
         override fun emptyRadiusRecipientsMessage(): Boolean = false
+
+        override fun cooldown(): Long = 0
+
+        override fun playerCooldown(player: CarbonPlayer): Long = 0
+
+        override fun startCooldown(player: CarbonPlayer): Long = 0
+
+        override fun shouldCrossServer(): Boolean = false
 
         override fun render(
             sender: CarbonPlayer,
@@ -124,11 +130,7 @@ object CarbonChatHook {
 
         override fun key(): Key = key
 
-        override fun speechPermitted(carbonPlayer: CarbonPlayer): ChannelPermissionResult = clanSpeech(plugin, carbonPlayer)
-
-        override fun hearingPermitted(player: CarbonPlayer): ChannelPermissionResult = ChannelPermissionResult.allowed()
-
-        override fun permission(): String = "daclans.chat"
+        override fun permissions(): ChannelPermissions = clanPermissions(plugin)
 
         override fun recipients(sender: CarbonPlayer): List<Audience> = clanRecipients(plugin, sender, ally)
 
@@ -143,6 +145,14 @@ object CarbonChatHook {
         override fun radius(): Double = delegate.radius()
 
         override fun emptyRadiusRecipientsMessage(): Boolean = delegate.emptyRadiusRecipientsMessage()
+
+        override fun cooldown(): Long = delegate.cooldown()
+
+        override fun playerCooldown(player: CarbonPlayer): Long = delegate.playerCooldown(player)
+
+        override fun startCooldown(player: CarbonPlayer): Long = delegate.startCooldown(player)
+
+        override fun shouldCrossServer(): Boolean = delegate.shouldCrossServer()
 
         override fun render(
             sender: CarbonPlayer,

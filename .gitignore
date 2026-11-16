@@ -6,4 +6,3 @@ build/
 out/
 dev.gradle.kts
 release.init.gradle.kts
-CHANGELOG.md
