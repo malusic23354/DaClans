@@ -22,6 +22,7 @@ class PlaceholderHook(private val plugin: DaClans) : PlaceholderExpansion() {
         val clan = plugin.clans.ofPlayer(p.uniqueId) ?: return ""
         return when (params) {
             "name" -> clan.coloredName()
+            "prefix" -> plugin.config.getString("chat.prefix", "[<clan>] ")!!.replace("<clan>", clan.coloredName())
             "plain_name" -> clan.name
             "tag" -> clan.color
             "leader" -> Bukkit.getOfflinePlayer(clan.leader).name ?: ""

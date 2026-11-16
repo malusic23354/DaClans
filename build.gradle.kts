@@ -24,7 +24,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
     compileOnly("me.clip:placeholderapi:2.12.3")
-
+    compileOnly("de.hexaoxi:carbonchat-api:3.0.0-beta.26")
     implementation("org.xerial:sqlite-jdbc:3.49.1.0") {
         exclude(group = "org.slf4j", module = "slf4j-api")
     }

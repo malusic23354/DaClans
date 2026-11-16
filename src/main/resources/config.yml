@@ -39,6 +39,7 @@ clan:
 
 chat:
   enabled: true
+  prefix: "[<clan>] "
   clan-format: "<gray>[Clan] <white><player>: <message>"
   ally-format: "<gray>[Ally] <white><player>: <message>"
   carbon:
@@ -98,7 +99,7 @@ leaderboard:
   page-size: 10
   refresh-seconds: 60
 
-bounty:
+bounty: #This only works with BountyLite
   allow-on-teammates: false
   commands:
     - bounty
