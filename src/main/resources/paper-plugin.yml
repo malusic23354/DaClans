@@ -5,6 +5,9 @@ loader: net.malusic.daclans.DaClansLoader
 api-version: "1.21.11"
 description: Simple clans plugin
 authors: [Malusic]
+libraries:
+  - org.xerial:sqlite-jdbc:3.49.1.0
+  - com.mysql:mysql-connector-j:26.7.0
 permissions:
   daclans.command.create:
     default: true
