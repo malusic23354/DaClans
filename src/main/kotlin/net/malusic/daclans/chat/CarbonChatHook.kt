@@ -23,9 +23,14 @@ object CarbonChatHook {
     @Volatile
     private var subscribed = false
 
+    @Volatile
+    private var registered = false
+
     fun register(plugin: DaClans) {
+        if (registered) return
         val carbon = CarbonChatProvider.carbonChat()
         registerChannels(plugin, carbon.channelRegistry())
+        registered = true
         if (subscribed) return
         subscribed = true
         carbon.eventHandler().subscribe(
