@@ -18,6 +18,11 @@ class PlaceholderHook(private val plugin: DaClans) : PlaceholderExpansion() {
 
     override fun onRequest(player: OfflinePlayer?, params: String): String? {
         if (params.startsWith("top_")) return top(params)
+        if (params == "active_wars") return plugin.wars.activeCount().toString()
+        if (params == "in_war") {
+            val c = player?.let { plugin.clans.ofPlayer(it.uniqueId) }
+            return (c != null && plugin.wars.inWar(c.id)).toString()
+        }
         val p = player ?: return ""
         val clan = plugin.clans.ofPlayer(p.uniqueId) ?: return ""
         return when (params) {

@@ -151,6 +151,19 @@ class ClanCommand(private val plugin: DaClans) {
                 cmd("logs").executes { logs(it, null) }
                     .then(clanArg("clan").executes { logs(it, StringArgumentType.getString(it, "clan")) })
             )
+            .then(
+                Commands.literal("war")
+                    .then(
+                        Commands.literal("call")
+                            .requires { it.sender.hasPermission("daclans.war.call") }
+                            .then(clanArg("name").executes { warCall(it) })
+                    )
+                    .then(
+                        Commands.literal("resign")
+                            .requires { it.sender.hasPermission("daclans.war.resign") }
+                            .executes { warResign(it) }
+                    )
+            )
             .then(cmd("version").executes { version(it) })
             .build()
         registrar.register(root, listOf("clans", "daclans"))
@@ -451,6 +464,17 @@ class ClanCommand(private val plugin: DaClans) {
                 plugin.messages.clan(other, "enemy-notice", "name" to clan.name)
             }
         }
+    }
+
+    private fun warCall(ctx: CommandContext<CommandSourceStack>): Int = member(ctx, leaderOnly = true) { player, clan ->
+        val arg = StringArgumentType.getString(ctx, "name")
+        val other = plugin.clans.byName(arg)
+        if (other == null) plugin.messages.send(player, "no-such-clan", "name" to arg)
+        else plugin.wars.call(player, clan, other)
+    }
+
+    private fun warResign(ctx: CommandContext<CommandSourceStack>): Int = member(ctx, leaderOnly = true) { player, clan ->
+        plugin.wars.resign(player, clan)
     }
 
     private fun warn(ctx: CommandContext<CommandSourceStack>): Int = member(ctx, need = "warn") { player, clan ->

@@ -1,5 +1,5 @@
 name: DaClans
-version: "0.1.3"
+version: "0.1.4"
 main: net.malusic.daclans.DaClans
 loader: net.malusic.daclans.DaClansLoader
 api-version: "1.21.11"
@@ -71,6 +71,10 @@ permissions:
     default: op
   daclans.antiteam.notify:
     default: op
+  daclans.war.call:
+    default: true
+  daclans.war.resign:
+    default: true
 dependencies:
   server:
     PlaceholderAPI:

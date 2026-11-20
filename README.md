@@ -42,6 +42,7 @@ DaClans lets players form clans, invite friends, climb a rank ladder, ally with 
 **Diplomacy**
 - Alliances with expiring requests, accepted by running the command from the other clan
 - Mark other clans as enemies
+- Clan wars: a leader calls a war on another clan, it starts after a countdown and ends at a kill goal or a time limit, optionally with allies
 - Optional damage reduction between clan members and between allies
 
 **Economy**
@@ -113,6 +114,8 @@ The main command is `/clan`, with the aliases `/clans` and `/daclans`.
 | `/clan settings` | Open the settings menu | Minimum rank set for `settings` |
 | `/clan ally <clan>` | Send, accept or end an alliance | Leader |
 | `/clan enemy <clan>` | Toggle a clan as your enemy | Leader |
+| `/clan war call <clan>` | Call a war on another clan | Leader |
+| `/clan war resign` | Resign the war your clan is in, the other side wins | Leader |
 | `/clan warn <player> <message>` | Send a warning to a member | Minimum rank set for `warn` |
 | `/clan deposit <amount>` | Add money to the clan bank | Members |
 | `/clan withdraw [amount]` | Take money from the bank, or everything if no amount is given | Leader |
@@ -149,6 +152,8 @@ All `daclans.command.*` permissions are granted to players by default, except `d
 | `/clan settings` | `daclans.command.settings` |
 | `/clan ally <clan>` | `daclans.command.ally` |
 | `/clan enemy <clan>` | `daclans.command.enemy` |
+| `/clan war call <clan>` | `daclans.war.call` |
+| `/clan war resign` | `daclans.war.resign` |
 | `/clan warn <player> <message>` | `daclans.command.warn` |
 | `/clan deposit <amount>` | `daclans.command.deposit` |
 | `/clan withdraw [amount]` | `daclans.command.withdraw` |
@@ -165,6 +170,8 @@ All `daclans.command.*` permissions are granted to players by default, except `d
 | Permission | Description | Default |
 |---|---|---|
 | `daclans.command.reload` | Reload the plugin configuration | op |
+| `daclans.war.call` | Call a clan war | true |
+| `daclans.war.resign` | Resign a clan war | true |
 | `daclans.antiteam.notify` | Receive a staff notice when clan members are teaming on a player | op |
 
 </details>
@@ -209,12 +216,14 @@ Requires PlaceholderAPI. The identifier is `daclans`.
 | `%daclans_last_seen%` | The player's last seen date |
 | `%daclans_last_seen_ago%` | The player's last seen time as a relative value |
 | `%daclans_position%` | The clan's position on the configured leaderboard |
+| `%daclans_active_wars%` | Number of wars currently running on the server |
+| `%daclans_in_war%` | `true` if the player's clan is in a running war, otherwise `false` |
 | `%daclans_top_<n>_TYPE%` | Value for position `n` on the `TYPE` leaderboard (`bank`, `members` or `allies`) |
 | `%daclans_top_<n>_TYPE_FIELD%` | A field for position `n` and type: `name`, `value`, `members`, `allies`, `enemies`, `bank`, `leader` or `description` |
 
 `%daclans_top_<n>_name%`, `%daclans_top_<n>_value%` and the other field names use the configured leaderboard when no type is given. For example, `%daclans_top_1_members_name%` returns the name of the clan with the most members.
 
-Placeholders return an empty string when the player has no clan, or when there is no clan at the requested leaderboard position.
+Clan placeholders return an empty string when the player has no clan, or when there is no clan at the requested leaderboard position. `%daclans_active_wars%` always returns a number and `%daclans_in_war%` returns `false` for players without a clan.
 
 </details>
 
@@ -222,7 +231,7 @@ Placeholders return an empty string when the player has no clan, or when there i
 
 | File | Contents |
 |---|---|
-| `config.yml` | Storage, hooks, clan limits, ranks, default rank permissions, damage rules, anti-teaming, leaderboard, bounty blocking and every message |
+| `config.yml` | Storage, hooks, clan limits, ranks, default rank permissions, damage rules, anti-teaming, wars, leaderboard, bounty blocking and every message |
 | `settings.yml` | Size, title and items of the settings menu, including slots, materials, upgrade cost and size |
 
 <details>
@@ -285,7 +294,16 @@ leaderboard:
   sort: bank             # bank, members or allies
   page-size: 10
   refresh-seconds: 60
+
+wars:
+  kills: 100             # kills one side needs to win
+  allowally: true        # allies take part in the war
+  threshold: 10          # minimum members in both clans to start a war
+  time: 5m               # countdown before the war starts
+  limit: 90m             # maximum war length, the side with more kills wins
 ```
+
+Wars are kept in memory and do not survive a restart. When the limit is reached the side with more kills wins, and equal kills end in a draw. Only the two clans that started the war can resign.
 
 Ranks are ordered by `level`. The lowest rank is given to new members, and the rank with the key `leader` is reserved for the clan owner:
 

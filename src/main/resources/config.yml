@@ -106,6 +106,12 @@ bounty:
   blocked-subcommands:
     - set
     - bet
+wars:
+  kills: 100
+  allowally: true
+  threshold: 10
+  time: 5m
+  limit: 90m
 
 messages:
   player-only: "<red>Players only."
@@ -197,3 +203,11 @@ messages:
   version-server: "<gray>Server: <white><version>"
   version-api: "<gray>API: <white><version>"
   version-author: "<gray>Author: <white><author>"
+  war-called: "<red>War called by <clan> on <victim> starts in <time> minutes!"
+  war-initiated: "<green>War Initiated!"
+  war-too-small: "<red>Both clans need at least <threshold> members to start a war."
+  war-busy: "<red>One of the clans is already in a war."
+  war-none: "<red>Your clan is not in a war."
+  war-resigned: "<yellow><resigner> resigned. <winner> wins the war."
+  war-won: "<green><winner> won the war against <loser>!"
+  war-draw: "<yellow>The war between <clan> and <victim> ended in a draw."

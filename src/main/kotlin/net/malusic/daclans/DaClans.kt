@@ -30,6 +30,8 @@ class DaClans : JavaPlugin() {
         private set
     lateinit var api: DaClansApi
         private set
+    lateinit var wars: WarManager
+        private set
     var economy: VaultHook? = null
         private set
 
@@ -52,6 +54,7 @@ class DaClans : JavaPlugin() {
         gui = SettingsGui(this)
         chat = ChatManager(this)
         api = DaClansApi(this)
+        wars = WarManager(this)
         DaClansProvider.register(api)
         server.pluginManager.registerEvents(gui, this)
         applyConfig()
@@ -63,6 +66,7 @@ class DaClans : JavaPlugin() {
 
     override fun onDisable() {
         DaClansProvider.unregister()
+        if (::wars.isInitialized) wars.shutdown()
         if (::storage.isInitialized) storage.close()
     }
 

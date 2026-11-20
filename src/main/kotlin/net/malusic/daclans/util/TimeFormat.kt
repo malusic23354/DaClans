@@ -10,6 +10,16 @@ object TimeFormat {
 
     fun date(epochMillis: Long): String = date.format(Instant.ofEpochMilli(epochMillis))
 
+    fun parse(input: String?, fallback: Long): Long {
+        val match = Regex("(\\d+)([smh])").matchEntire(input?.trim()?.lowercase() ?: return fallback) ?: return fallback
+        val n = match.groupValues[1].toLong()
+        return n * when (match.groupValues[2]) {
+            "s" -> 1_000L
+            "m" -> 60_000L
+            else -> 3_600_000L
+        }
+    }
+
     fun ago(epochMillis: Long): String {
         if (epochMillis <= 0) return "unknown"
         val diff = System.currentTimeMillis() - epochMillis

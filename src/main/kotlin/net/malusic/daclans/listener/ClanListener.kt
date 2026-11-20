@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.entity.PlayerDeathEvent
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
@@ -100,6 +101,14 @@ class ClanListener(private val plugin: DaClans) : Listener {
         Bukkit.getOfflinePlayerIfCached(input)?.let { return it.uniqueId }
         val offline = Bukkit.getOfflinePlayer(input)
         return if (offline.hasPlayedBefore() || offline.name != null) offline.uniqueId else null
+    }
+
+    @EventHandler
+    fun onDeath(e: PlayerDeathEvent) {
+        val killer = e.entity.killer ?: return
+        val kc = plugin.clans.ofPlayer(killer.uniqueId) ?: return
+        val vc = plugin.clans.ofPlayer(e.entity.uniqueId) ?: return
+        plugin.wars.onKill(kc.id, vc.id)
     }
 
     @EventHandler
